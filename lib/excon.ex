@@ -37,7 +37,7 @@ defmodule Excon do
   defp do_mirror(rows, :btt, _), do: rows |> Enum.reverse() |> Enum.concat(rows)
 
   defp hashtopat(str), do: do_hashtopat(str, [])
-  defp do_hashtopat(<<>>, acc), do: acc |> Enum.reverse() |> Enum.chunk(4)
+  defp do_hashtopat(<<>>, acc), do: acc |> Enum.reverse() |> Enum.chunk_every(4)
 
   defp do_hashtopat(<<t::integer-size(2), rest::bitstring>>, acc),
     do: do_hashtopat(rest, [t | acc])
@@ -108,16 +108,7 @@ defmodule Excon do
   """
   def ident(id, opts \\ []) do
     {fname, mag, type} = parse_options(opts)
-    hash = Blake2.hash2b(id, 5)
-
-    img =
-      case type do
-        :png -> ident_png(hash, mag)
-        :svg -> ident_svg(hash, mag)
-        _ -> {:error, "Unknown file type"}
-      end
-
-    output(img, fname, type)
+    output(ident(type,Blake2.hash2b(id, 5), mag), fname, type)
   end
 
   defp output(img, nil, _t), do: img
@@ -126,7 +117,7 @@ defmodule Excon do
     :ok = File.write(filename <> "." <> Atom.to_string(type), img)
   end
 
-  defp ident_png(hash, mag) do
+  defp ident(:png, hash, mag) do
     <<forpat::binary-size(4), forpal::bitstring-size(8)>> = hash
 
     forpat
@@ -136,7 +127,7 @@ defmodule Excon do
     |> to_png(mag, forpal)
   end
 
-  defp ident_svg(hash, mag) do
+  defp ident(:svg, hash, mag) do
     <<
       c1::bitstring-size(9),
       c2::bitstring-size(9),
