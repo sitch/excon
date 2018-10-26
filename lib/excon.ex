@@ -64,7 +64,7 @@ defmodule Excon do
 
     %{
       size: {8 * mag, 8 * mag},
-      mode: {:indexed, 8},
+      mode: {:indexed, mag},
       call: fn i -> Agent.update(pid, fn state -> [i | state] end) end,
       palette: computed_pal(pdx)
     }
