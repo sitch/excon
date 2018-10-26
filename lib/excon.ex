@@ -114,7 +114,8 @@ defmodule Excon do
       case type do
         :png -> ident_png(hash, mag)
         :svg -> ident_svg(hash, mag)
-        _ -> {:error, "Unknown file type"}
+        # _ -> {:error, "Unknown file type"}
+        _ -> nil
       end
 
     output(img, fname, type)
