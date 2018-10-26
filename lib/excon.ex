@@ -115,7 +115,7 @@ defmodule Excon do
         :png -> ident_png(hash, mag)
         :svg -> ident_svg(hash, mag)
         # _ -> {:error, "Unknown file type"}
-        _ -> nil
+        _ -> img
       end
 
     output(img, fname, type)
